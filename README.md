@@ -2,41 +2,40 @@
 
 An end-to-end Machine Learning project that predicts whether a telecom customer is likely to churn based on their demographic and service information.
 
-The project covers the complete ML workflow—from data preprocessing and model training to deployment using Flask.
+The project covers the complete ML workflow — from data preprocessing and model training to deployment as a Flask web application.
 
 ---
 
-## 🚀 Project Demo
+## 🚀 Live Demo
 
-Predict whether a customer will:
+**Try the deployed application:**
 
-- ✅ Stay with the company
-- ❌ Churn from the company
+[Customer Churn Prediction — Live Demo](https://customer-churn-app-z1qv.onrender.com/)
 
-The web application accepts customer details through a user-friendly interface and instantly predicts the churn probability.
+The application accepts customer details and predicts whether the customer is likely to stay or churn, along with the estimated churn probability.
 
 ---
 
 ## 📂 Project Structure
 
-```
-Customer_Churn_Prediction/
-│
+```text
+Customer_churn_app/
+
 ├── app.py                  # Flask application
-├── requirements.txt
+├── requirements.txt        # Python dependencies
 ├── README.md
-│
+
 ├── data/
 │   ├── model.pkl
 │   ├── scaler.pkl
 │   └── columns.pkl
-│
+
 ├── notebook/
 │   └── customer_churn.ipynb
-│
+
 ├── templates/
 │   └── index.html
-│
+
 └── dataset/
     └── WA_Fn-UseC_-Telco-Customer-Churn.csv
 ```
@@ -45,34 +44,35 @@ Customer_Churn_Prediction/
 
 # 📊 Dataset
 
-Dataset: **Telco Customer Churn Dataset**
+**Dataset:** Telco Customer Churn Dataset
 
 The dataset contains customer information such as:
 
-- Gender
-- Senior Citizen
-- Partner
-- Dependents
-- Tenure
-- Phone Service
-- Internet Service
-- Online Security
-- Online Backup
-- Device Protection
-- Tech Support
-- Streaming TV
-- Streaming Movies
-- Contract Type
-- Paperless Billing
-- Payment Method
-- Monthly Charges
-- Total Charges
+* Gender
+* Senior Citizen
+* Partner
+* Dependents
+* Tenure
+* Phone Service
+* Internet Service
+* Online Security
+* Online Backup
+* Device Protection
+* Tech Support
+* Streaming TV
+* Streaming Movies
+* Contract Type
+* Paperless Billing
+* Payment Method
+* Monthly Charges
+* Total Charges
 
-Target Variable:
+### Target Variable
 
-- **Churn**
-    - Yes
-    - No
+**Churn**
+
+* Yes
+* No
 
 ---
 
@@ -80,79 +80,74 @@ Target Variable:
 
 ## 1. Data Cleaning
 
-- Removed Customer ID
-- Converted TotalCharges to numeric
-- Removed missing values
-
----
+* Removed Customer ID
+* Converted `TotalCharges` to numeric
+* Removed missing values
 
 ## 2. Feature Engineering
 
 ### Label Encoding
 
-Applied on binary columns:
+Applied to binary features such as:
 
-- Gender
-- Senior Citizen
-- Partner
-- Dependents
-- Phone Service
-- Paperless Billing
-- Churn
+* Gender
+* Senior Citizen
+* Partner
+* Dependents
+* Phone Service
+* Paperless Billing
 
----
+The target variable `Churn` was also encoded for model training.
 
-### One Hot Encoding
+### One-Hot Encoding
 
-Applied using:
+Categorical features were converted using:
 
 ```python
 pd.get_dummies(drop_first=True)
 ```
 
-for categorical features like:
+This was applied to features such as:
 
-- Internet Service
-- Contract
-- Payment Method
-- Streaming Services
-- Online Security
-- etc.
+* Internet Service
+* Contract
+* Payment Method
+* Streaming Services
+* Online Security
+* Other categorical variables
 
 ---
 
 ## 3. Feature Scaling
 
-StandardScaler was applied on:
+`StandardScaler` was used to standardize numerical features.
 
-- Tenure
-- Monthly Charges
-- Total Charges
-
-Training:
+During training:
 
 ```python
 fit_transform()
 ```
 
-Deployment:
+During deployment:
 
 ```python
 transform()
 ```
 
+The trained scaler is saved and reused during prediction to maintain consistency between training and deployment.
+
 ---
 
 ## 4. Train-Test Split
 
-```
+```text
 80% Training
 20% Testing
 ```
 
-Random State:
+Random state:
 
-```
+```text
 42
 ```
 
@@ -162,75 +157,72 @@ Random State:
 
 The following models were experimented with:
 
-- Logistic Regression
-- Decision Tree
-- Random Forest
+* Logistic Regression
+* Decision Tree
+* Random Forest
 
-After comparing performance metrics, **Logistic Regression** was selected as the final model.
+Logistic Regression was selected as the final model for deployment based on the evaluation performed during model development.
 
 ---
 
-# 📈 Model Performance
+# 📈 Model Evaluation
 
-Evaluation Metrics:
+The model was evaluated using:
 
-- Accuracy
-- Precision
-- Recall
-- F1 Score
-- Confusion Matrix
+* Accuracy
+* Precision
+* Recall
+* F1 Score
+* Confusion Matrix
 
-Business Goal:
-
-Customer churn prediction is a **recall-focused problem**, where identifying potential churn customers is more important than minimizing false positives.
+For churn prediction, recall is an important metric because missing customers who are actually likely to churn can be costly from a business perspective.
 
 ---
 
 # 💾 Model Persistence
 
-The trained artifacts were saved using Pickle.
+The trained model artifacts were saved using Pickle.
 
-Saved files:
-
+```text
+data/
+├── model.pkl
+├── scaler.pkl
+└── columns.pkl
 ```
-model.pkl
-scaler.pkl
-columns.pkl
-```
 
-These files are loaded during deployment to ensure the preprocessing pipeline remains identical to training.
+These artifacts are loaded by the Flask application during prediction.
+
+This ensures that the same trained model, scaler, and feature structure are used during deployment.
 
 ---
 
-# 🌐 Deployment
+# 🌐 Application Workflow
 
-The application is built using **Flask**.
+The application is built using Flask.
 
-Workflow:
-
-```
+```text
 User
-    ↓
+  ↓
 HTML Form
-    ↓
+  ↓
 Flask
-    ↓
+  ↓
 request.form
-    ↓
+  ↓
 Preprocessing
-    ↓
-Label Encoding
-    ↓
-One Hot Encoding
-    ↓
+  ↓
+Encoding
+  ↓
 Column Alignment
-    ↓
+  ↓
 Feature Scaling
-    ↓
+  ↓
 Logistic Regression
-    ↓
+  ↓
 Prediction
-    ↓
+  ↓
+Churn Probability
+  ↓
 Display Result
 ```
 
@@ -238,83 +230,7 @@ Display Result
 
 # 🛠️ Technologies Used
 
-- Python
-- Pandas
-- NumPy
-- Scikit-learn
-- Flask
-- HTML
-- Pickle
-
----
-
-# ▶️ Installation
-
-Clone the repository
-
-```bash
-git clone https://github.com/Sarthakthakre18/Customer_churn_app.git
-```
-
-Move inside the project
-
-```bash
-cd Customer-Churn-Prediction
-```
-
-Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-Run the Flask application
-
-```bash
-python app.py
-```
-
-Open your browser
-
-```
-http://127.0.0.1:5000/
-```
-
-# 🎯 Key Learnings
-
-Through this project I learned:
-
-- Data preprocessing
-- Label Encoding
-- One Hot Encoding
-- Feature Scaling
-- Logistic Regression
-- Model Evaluation
-- Model Serialization using Pickle
-- Flask Deployment
-- Building an end-to-end Machine Learning application
-- Handling preprocessing during deployment
-- Feature alignment using `reindex()`
-
----
-
-# 🚀 Future Improvements
-
-- Deploy on Render
-- Dockerize the application
-- Improve UI using Bootstrap or React
-- Add probability visualization
-- Add SHAP explanations for predictions
-- Store prediction history in a database
-
----
-
-# 👨‍💻 Author
-
-**Sarthak Thakre**
-
-3rd Year AIML Engineering Student
-
-Aspiring Machine Learning Engineer
-
-Focused on building end-to-end ML projects, mastering Python, Machine Learning
+* Python
+* Pandas
+* NumPy
+* Scikit
