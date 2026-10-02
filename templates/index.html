@@ -2,153 +2,314 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Customer Churn Prediction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; }
-    h1 { font-size: 22px; }
-    form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 4px; }
-    select, input { width: 100%; padding: 6px; }
-    button { grid-column: 1 / -1; padding: 10px; font-size: 15px; margin-top: 10px; cursor: pointer; }
-    .result { margin-top: 25px; padding: 15px; border-radius: 6px; background: #f1f1f1; }
+    :root {
+      --bg: #f6efe7;
+      --card: #fffaf4;
+      --ink: #3b2a20;
+      --muted: #8a7466;
+      --line: #e6d7c8;
+      --brown: #8b5e3c;
+      --brown-dark: #6f4a2e;
+      --tint: #f1e4d4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    /* Top bar */
+    .nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--line);
+      padding: 16px 24px;
+    }
+    .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--brown-dark);
+    }
+
+    /* Layout */
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px 60px; }
+
+    .intro { margin-bottom: 28px; }
+    .intro h1 {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--ink);
+      text-shadow: 1px 1px 0 #e3cdb6, 2px 2px 0 #d6bba0, 3px 3px 0 #c9a98a;
+    }
+    .intro p { margin-top: 10px; color: var(--muted); font-size: 14px; max-width: 520px; }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--brown-dark);
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 20px; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--brown);
+      box-shadow: 0 0 0 3px rgba(139, 94, 60, .18);
+    }
+
+    /* Button */
+    button {
+      width: 100%;
+      padding: 14px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--brown);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+    button:hover { background: var(--brown-dark); }
+    button:active { transform: scale(.99); }
+    button:focus-visible { outline: 3px solid rgba(139, 94, 60, .4); outline-offset: 2px; }
+
+    /* Result */
+    .result {
+      background: var(--tint);
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--brown);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .result .label { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+    .result .headline { font-size: 20px; font-weight: 600; color: var(--ink); }
+    .result .detail { margin-top: 4px; font-size: 15px; color: var(--brown-dark); }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      .intro h1 { font-size: 26px; }
+      .card { padding: 20px; }
+    }
   </style>
 </head>
 <body>
-  <h1>Customer Churn Prediction</h1>
 
-  <form action="/predict" method="post">
-    <div>
-      <label>Gender</label>
-      <select name="gender">
-        <option>Female</option>
-        <option>Male</option>
-      </select>
-    </div>
+  <header class="nav">
+    <div class="nav-inner">Churn Predictor</div>
+  </header>
 
-    <div>
-      <label>Senior Citizen</label>
-      <select name="SeniorCitizen">
-        <option value="0">No</option>
-        <option value="1">Yes</option>
-      </select>
-    </div>
+  <main class="container">
 
-    <div>
-      <label>Partner</label>
-      <select name="Partner"><option>No</option><option>Yes</option></select>
-    </div>
+    <section class="intro">
+      <h1>Customer Churn Prediction</h1>
+      <p>Enter a customer's details to see how likely they are to leave.</p>
+    </section>
 
-    <div>
-      <label>Dependents</label>
-      <select name="Dependents"><option>No</option><option>Yes</option></select>
-    </div>
+    {% if prediction_text %}
+    <section class="result" id="result">
+      <div class="label">Prediction</div>
+      <div class="headline">{{ prediction_text }}</div>
+      <div class="detail">{{ probability_text }}</div>
+    </section>
+    {% endif %}
 
-    <div>
-      <label>Tenure (months)</label>
-      <input type="number" step="1" name="tenure" required>
-    </div>
+    <form action="/predict" method="post">
 
-    <div>
-      <label>Phone Service</label>
-      <select name="PhoneService"><option>No</option><option>Yes</option></select>
-    </div>
+      <div class="card">
+        <h2>Customer details</h2>
+        <div class="grid">
+          <div>
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender">
+              <option>Female</option>
+              <option>Male</option>
+            </select>
+          </div>
 
-    <div>
-      <label>Multiple Lines</label>
-      <select name="MultipleLines">
-        <option>No</option><option>Yes</option><option>No phone service</option>
-      </select>
-    </div>
+          <div>
+            <label for="SeniorCitizen">Senior citizen</label>
+            <select id="SeniorCitizen" name="SeniorCitizen">
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
 
-    <div>
-      <label>Internet Service</label>
-      <select name="InternetService">
-        <option>DSL</option><option>Fiber optic</option><option>No</option>
-      </select>
-    </div>
+          <div>
+            <label for="Partner">Partner</label>
+            <select id="Partner" name="Partner"><option>No</option><option>Yes</option></select>
+          </div>
 
-    <div>
-      <label>Online Security</label>
-      <select name="OnlineSecurity">
-        <option>No</option><option>Yes</option><option>No internet service</option>
-      </select>
-    </div>
+          <div>
+            <label for="Dependents">Dependents</label>
+            <select id="Dependents" name="Dependents"><option>No</option><option>Yes</option></select>
+          </div>
 
-    <div>
-      <label>Online Backup</label>
-      <select name="OnlineBackup">
-        <option>No</option><option>Yes</option><option>No internet service</option>
-      </select>
-    </div>
+          <div>
+            <label for="tenure">Tenure (months)</label>
+            <input id="tenure" type="number" step="1" min="0" name="tenure" placeholder="e.g. 12" required>
+          </div>
+        </div>
+      </div>
 
-    <div>
-      <label>Device Protection</label>
-      <select name="DeviceProtection">
-        <option>No</option><option>Yes</option><option>No internet service</option>
-      </select>
-    </div>
+      <div class="card">
+        <h2>Services</h2>
+        <div class="grid">
+          <div>
+            <label for="PhoneService">Phone service</label>
+            <select id="PhoneService" name="PhoneService"><option>No</option><option>Yes</option></select>
+          </div>
 
-    <div>
-      <label>Tech Support</label>
-      <select name="TechSupport">
-        <option>No</option><option>Yes</option><option>No internet service</option>
-      </select>
-    </div>
+          <div>
+            <label for="MultipleLines">Multiple lines</label>
+            <select id="MultipleLines" name="MultipleLines">
+              <option>No</option><option>Yes</option><option>No phone service</option>
+            </select>
+          </div>
 
-    <div>
-      <label>Streaming TV</label>
-      <select name="StreamingTV">
-        <option>No</option><option>Yes</option><option>No internet service</option>
-      </select>
-    </div>
+          <div>
+            <label for="InternetService">Internet service</label>
+            <select id="InternetService" name="InternetService">
+              <option>DSL</option><option>Fiber optic</option><option>No</option>
+            </select>
+          </div>
 
-    <div>
-      <label>Streaming Movies</label>
-      <select name="StreamingMovies">
-        <option>No</option><option>Yes</option><option>No internet service</option>
-      </select>
-    </div>
+          <div>
+            <label for="OnlineSecurity">Online security</label>
+            <select id="OnlineSecurity" name="OnlineSecurity">
+              <option>No</option><option>Yes</option><option>No internet service</option>
+            </select>
+          </div>
 
-    <div>
-      <label>Contract</label>
-      <select name="Contract">
-        <option>Month-to-month</option><option>One year</option><option>Two year</option>
-      </select>
-    </div>
+          <div>
+            <label for="OnlineBackup">Online backup</label>
+            <select id="OnlineBackup" name="OnlineBackup">
+              <option>No</option><option>Yes</option><option>No internet service</option>
+            </select>
+          </div>
 
-    <div>
-      <label>Paperless Billing</label>
-      <select name="PaperlessBilling"><option>No</option><option>Yes</option></select>
-    </div>
+          <div>
+            <label for="DeviceProtection">Device protection</label>
+            <select id="DeviceProtection" name="DeviceProtection">
+              <option>No</option><option>Yes</option><option>No internet service</option>
+            </select>
+          </div>
 
-    <div>
-      <label>Payment Method</label>
-      <select name="PaymentMethod">
-        <option>Electronic check</option>
-        <option>Mailed check</option>
-        <option>Bank transfer (automatic)</option>
-        <option>Credit card (automatic)</option>
-      </select>
-    </div>
+          <div>
+            <label for="TechSupport">Tech support</label>
+            <select id="TechSupport" name="TechSupport">
+              <option>No</option><option>Yes</option><option>No internet service</option>
+            </select>
+          </div>
 
-    <div>
-      <label>Monthly Charges</label>
-      <input type="number" step="0.01" name="MonthlyCharges" required>
-    </div>
+          <div>
+            <label for="StreamingTV">Streaming TV</label>
+            <select id="StreamingTV" name="StreamingTV">
+              <option>No</option><option>Yes</option><option>No internet service</option>
+            </select>
+          </div>
 
-    <div>
-      <label>Total Charges</label>
-      <input type="number" step="0.01" name="TotalCharges" required>
-    </div>
+          <div>
+            <label for="StreamingMovies">Streaming movies</label>
+            <select id="StreamingMovies" name="StreamingMovies">
+              <option>No</option><option>Yes</option><option>No internet service</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-    <button type="submit">Predict</button>
-  </form>
+      <div class="card">
+        <h2>Billing</h2>
+        <div class="grid">
+          <div>
+            <label for="Contract">Contract</label>
+            <select id="Contract" name="Contract">
+              <option>Month-to-month</option><option>One year</option><option>Two year</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="PaperlessBilling">Paperless billing</label>
+            <select id="PaperlessBilling" name="PaperlessBilling"><option>No</option><option>Yes</option></select>
+          </div>
+
+          <div>
+            <label for="PaymentMethod">Payment method</label>
+            <select id="PaymentMethod" name="PaymentMethod">
+              <option>Electronic check</option>
+              <option>Mailed check</option>
+              <option>Bank transfer (automatic)</option>
+              <option>Credit card (automatic)</option>
+            </select>
+          </div>
+
+          <div></div>
+
+          <div>
+            <label for="MonthlyCharges">Monthly charges</label>
+            <input id="MonthlyCharges" type="number" step="0.01" min="0" name="MonthlyCharges" placeholder="e.g. 70.35" required>
+          </div>
+
+          <div>
+            <label for="TotalCharges">Total charges</label>
+            <input id="TotalCharges" type="number" step="0.01" min="0" name="TotalCharges" placeholder="e.g. 845.50" required>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit">Predict churn</button>
+    </form>
+
+  </main>
 
   {% if prediction_text %}
-  <div class="result">
-    <strong>{{ prediction_text }}</strong><br>
-    {{ probability_text }}
-  </div>
+  <script>
+    // Bring the result into view after a prediction
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  </script>
   {% endif %}
+
 </body>
 </html>
